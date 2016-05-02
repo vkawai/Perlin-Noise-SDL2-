@@ -13,6 +13,8 @@
 #include "Util.h"
 
 class Render {
+private:
+	PerlinNoise *p;
 protected:
 	bool exit;
 	SDL_Event e;

@@ -17,8 +17,10 @@ private:
 public:
 	int width;
 	int height;
+	float amplitude;
+	float persistance;
 
-	PerlinNoise(int width, int height);
+	PerlinNoise(int width, int height, float amplitude = 0.5, float persistance = 0.5);
 	virtual ~PerlinNoise();
 
 	float **generateWhiteNoise(int seed = 128);

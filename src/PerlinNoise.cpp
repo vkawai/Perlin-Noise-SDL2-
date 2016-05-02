@@ -7,9 +7,11 @@
 
 #include "PerlinNoise.h"
 
-PerlinNoise::PerlinNoise(int width, int height){
+PerlinNoise::PerlinNoise(int width, int height, float amplitude, float persistance){
 	this->width = width;
 	this->height = height;
+	this->amplitude = amplitude;
+	this->persistance = persistance;
 }
 
 PerlinNoise::~PerlinNoise(){
@@ -62,8 +64,6 @@ float** PerlinNoise::generatePerlinNoise(float** baseNoise, int octaveCount) {
 	float ***smoothNoise = new float**[octaveCount];
 
 	float **perlinNoise = Util::matrixAlloc(width,height);
-	float amplitude = 0.7;
-	float persistance = 0.7;
 	float totalAmplitude = 0.0;
 
 	for(int octave = octaveCount-1; octave >= 0; octave--){

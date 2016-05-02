@@ -27,11 +27,14 @@ Render::Render() {
 		std::cout << "SDL_CreateRenderer error #" << SDL_GetError() << std::endl;
 		throw -3;
 	}
+
+	p = new PerlinNoise(SCREEN_WIDTH, SCREEN_HEIGHT);
 }
 
 Render::~Render() {
 	SDL_DestroyRenderer(gRenderer);
 	SDL_DestroyWindow(gWindow);
+	delete p;
 }
 
 void Render::run() {
@@ -49,8 +52,16 @@ void Render::run() {
 }
 
 void Render::setup() {
-	PerlinNoise p(SCREEN_WIDTH,SCREEN_HEIGHT);
-	float **base = p.generatePerlinNoise(128,10);
+	int seed;
+	int octaveCount;
+	float persistence;
+	float amplitude;
+	std::cout << "Seed Persistence Amplitude OctaveCount" << std::endl;
+	std::cin >> seed >> persistence >> amplitude >> octaveCount;
+	p->amplitude = amplitude;
+	p->persistance = persistence;
+
+	float **base = p->generatePerlinNoise(seed,octaveCount);
 
 	SDL_SetRenderDrawColor(gRenderer,0x00,0x00,0x00,0xFF);
 	SDL_RenderClear(gRenderer);
@@ -58,19 +69,19 @@ void Render::setup() {
 	int c = 0;
 	for(int i = 0; i < SCREEN_WIDTH; i++){
 		for(int j = 0; j < SCREEN_HEIGHT; j++){
-			SDL_Rect p;
-			p.x = i;
-			p.y = j;
-			p.w = 1;
-			p.h = 1;
+			SDL_Rect rect;
+			rect.x = i;
+			rect.y = j;
+			rect.w = 1;
+			rect.h = 1;
 			c = base[i][j]*255;
 			SDL_SetRenderDrawColor(gRenderer,c,c,c,0xFF);
-			SDL_RenderFillRect(gRenderer,&p);
-			SDL_RenderDrawRect(gRenderer,&p);
+			SDL_RenderFillRect(gRenderer,&rect);
+			SDL_RenderDrawRect(gRenderer,&rect);
 		}
 	}
 
-	Util::matrixDealloc(base,p.width,p.height);
+	Util::matrixDealloc(base,p->width,p->height);
 	SDL_RenderPresent(gRenderer);
 }
 
@@ -89,6 +100,9 @@ void Render::input(double delta) {
 		if(e.type == SDL_KEYDOWN){
 			if(e.key.keysym.sym == SDLK_ESCAPE){
 				exit = true;
+			}
+			else if(e.key.keysym.sym == SDLK_r){
+				setup();
 			}
 		}
 	}
